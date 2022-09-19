@@ -1,0 +1,38 @@
+Thread 1 started
+Thread 10 started
+Thread 11 started
+Thread 100 started
+Thread 101 started
+Thread 110 started
+Thread 1000 started
+Thread 111 started
+Thread 1100 started
+Thread 1010 started
+Thread 1010 finished: 48, 
+Thread 1011 started
+Thread 1011 finished: 19, 
+Thread 11000 started
+Thread 11000 finished: 93, 
+Thread 10000 started
+Thread 10000 finished: 17, 
+Thread 1101 started
+Thread 1101 finished: 20, 
+Thread 1110 started
+Thread 1110 finished: 23, 
+Thread 1001 started
+Thread 1001 finished: 71, 
+Thread 11001 started
+Thread 101 finished: 19, 48, 
+Thread 11001 finished: 1, 
+Thread 1111 started
+Thread 1111 finished: 51, 
+Thread 10001 started
+Thread 10001 finished: 73, 
+Thread 1000 finished: 17, 73, 
+Thread 111 finished: 23, 51, 
+Thread 1100 finished: 1, 93, 
+Thread 110 finished: 1, 20, 93, 
+Thread 11 finished: 1, 20, 23, 51, 93, 
+Thread 100 finished: 17, 71, 73, 
+Thread 10 finished: 17, 19, 48, 71, 73, 
+Thread 1 finished: 1, 17, 19, 20, 23, 48, 51, 71, 73, 93, 
