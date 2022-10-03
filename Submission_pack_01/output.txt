@@ -1,0 +1,14 @@
+Thread 3832 started
+Thread 19756 started
+Thread 19920 started
+Thread 21416 started
+Thread 17164 started
+Thread 18672 started
+Thread 17164 finished: 55, 
+Thread 18672 finished: 75, 
+Thread 21416 finished: 25, 
+Thread 6672 started
+Thread 6672 finished: 1, 
+Thread 19756 finished: 55, 75, 
+Thread 19920 finished: 1, 25, 
+Thread 3832 finished: 1, 25, 55, 75, 
