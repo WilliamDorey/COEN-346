@@ -3,7 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <thread>
-//#include <sstream>
+#include <sstream>
 
 using namespace std;
 
@@ -68,7 +68,11 @@ void merge_sort(vector<int>& v, int start, int end, ofstream& file) {
     
     string str;
     thread::id thrID = this_thread::get_id(); 
-    file << "Thread " << thrID << " started\n";
+
+    stringstream strID;
+    strID << "Thread " << thrID << " started\n";
+    str = strID.str();
+    file << str;
 
     //Converting thread ID to int then to binary
     /*
@@ -79,12 +83,14 @@ void merge_sort(vector<int>& v, int start, int end, ofstream& file) {
     */
  
     //Completes algorithm recursively
+    strID << "Thread " << thrID << " finished: ";
+    str = strID.str();
     if (end <= start) {
         for (int i = start; i <= end; i++) {
             str += std::to_string(v[i]) + ", ";
         }
         str += '\n';
-        file << "Thread " << thrID << " finished: " << str;
+        file << str;
         return;
     }
 
@@ -108,7 +114,7 @@ void merge_sort(vector<int>& v, int start, int end, ofstream& file) {
         str += std::to_string(v[i]) + ", ";
     }
     str += '\n';
-    file << "Thread " << thrID << " finished: " << str;
+    file << str;
 }
 
 void merge_array(vector<int>& v, int start, int mid, int end)
