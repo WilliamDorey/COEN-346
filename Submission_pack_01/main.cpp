@@ -39,12 +39,8 @@ int main() {
     ofstream outFile;
     outFile.open("output.txt");
 
-    // Start primary thread in the recursive function to begin merge sort
-    thread mainThread(merge_sort, ref(list), 0, listSize, ref(outFile));
-
-    // Calling the join function for the primary thread so the process does not
-    // terminate before completing the merge sort
-    mainThread.join();
+    // Start the recursive function to commence merge sort
+    merge_sort(list, 0, listSize, outFile);
 
     // Close the output file and terminate the process
     outFile.close();
