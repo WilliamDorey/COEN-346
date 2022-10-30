@@ -10,6 +10,9 @@ using namespace std;
 User::User() {
     id = "";
     index = 0;
+    next = nullptr;
+    previous = nullptr;
+    element = 0;
 }
 
 User::User(string newId, int i) {
@@ -43,4 +46,42 @@ void User::setID(string newId) {
 }
 void User::setIndex(int) {
 
+}
+
+//Get fucntions
+User *User::getNext()
+{
+    return next;
+}
+User *User::getPrevious()
+{
+    return previous;
+}
+int User::getElement()
+{
+    return element;
+}
+
+//Functions to set to NULL
+void User::setNexttoNULL()
+{
+    next = nullptr;
+}
+void User::setPrevioustoNULL()
+{
+    previous = nullptr;
+}
+
+//Set functions
+void User::setNext(User* user)
+{
+    next = user;
+}
+void User::setPrevious(User *user)
+{
+    previous = user;
+}
+void User::setElement(int a)
+{
+    element = a;
 }
