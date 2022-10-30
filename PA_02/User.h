@@ -14,6 +14,11 @@ private:
     int *processes;
     int index;
     int total;
+    
+    //Data types for Users in Queue
+    User *next;
+    User *previous;
+    int element;
 
 public:
     //Constructors
@@ -38,6 +43,19 @@ public:
     //Set functions
     void setID(string);
     void setIndex(int);
+    
+    //Get functions for Users in Queue
+    User *getNext();
+    User *getPrevious();
+    int getElement();
+
+    //Set functions for Users in Queue
+    void setNexttoNULL();
+    void setPrevioustoNULL();
+    void setNext(User*);
+    void setPrevious(User*);
+    void setElement(int);
+
 };
 
 
