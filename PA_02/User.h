@@ -1,9 +1,6 @@
-//
-// Created by willi on 2022-10-27.
-//
-
 #ifndef PA_02_USER_H
 #define PA_02_USER_H
+
 #include <string>
 
 using namespace std;
@@ -11,32 +8,34 @@ using namespace std;
 class User {
 private:
     string id;
-    int *processes;
     int index;
     int total;
+    int* processes;
 
 public:
     //Constructors
-    User();
-    User(string, int);
+    explicit User(string, int);
 
     //Destructor
     ~User();
 
     //Member functions
-    void addProcess();
+    void addProcess(int&,int,int,int);
     void resume();
     void pause();
     int validate();
-    void sortProcesses();
+    int nextProcess();
+    void static process(int&, int, int, int&);
+
 
     //Get functions
     string getID();
     int getTotal() const;
     int getIndex() const;
+    int getStatus();
 
     //Set functions
-    void setID(string);
+//    void setID(string);
     void setIndex(int);
 };
 
