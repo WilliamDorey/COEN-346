@@ -1,3 +1,0 @@
-C:/Users/willi/CLionProjects/COEN-346/PA_02/cmake-build-debug/CMakeFiles/PA_02.dir
-C:/Users/willi/CLionProjects/COEN-346/PA_02/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/willi/CLionProjects/COEN-346/PA_02/cmake-build-debug/CMakeFiles/rebuild_cache.dir
