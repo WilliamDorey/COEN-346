@@ -1,7 +1,3 @@
-//
-// Created by willi on 2022-11-21.
-//
-
 #include "MemorySpace.h"
 
 MemorySpace::MemorySpace(){

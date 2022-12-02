@@ -25,10 +25,14 @@ void scheduler(int&, fstream&);
 int main() {
     // Creating common streams and variables
     fstream log;
+    log.open("../output.txt" ,ios_base::out);
+
     int clk = 0;
     // Initializing clock, scheduler, and memory manager
     thread thr_clock(virtual_clock, ref(clk));
-    thread thr_sched(scheduler, ref(clk),);
+    thread thr_sched(scheduler, ref(clk), ref(log));
+    thr_clock.detach();
+    thr_sched.join();
     std::cout << "Hello, World!" << std::endl;
     return 0;
 }
@@ -54,9 +58,24 @@ void virtual_clock(int& clk){
 //Scheduler function
 // First In First Out (FIFO) scheduler for process that are listed in "processes.txt"
 void scheduler(int& clk, fstream& logs){
+    string temp = "";
     // TODO: Open input file streams for the "commands.txt" and "processes.txt" files
+    fstream processes;
+    fstream commands;
+
+    processes.open("../processes.txt", ios_base::in);
+    commands.open("../commands.txt", ios_base::in);
 
     // TODO: Read "processes.txt" for the core count (C), number of processes (N), and the processes respective values
+    int N = 0;
+    processes >> N;
+    temp = to_string(N);
+    logs << temp << endl;
+    temp = "";
+    processes >> temp;
+    logs << temp;
+    commands >> temp;
+    logs << temp;
 
     // TODO: Start process threads as they arrive based on reference clock
     //  (store order as file line # in an array maybe? or a parallel array of arrival and burst times?)

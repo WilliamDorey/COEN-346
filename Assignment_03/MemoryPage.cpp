@@ -1,7 +1,3 @@
-//
-// Created by willi on 2022-11-21.
-//
-
 #include "MemoryPage.h"
 
 using namespace std;

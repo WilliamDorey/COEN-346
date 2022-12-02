@@ -1,7 +1,3 @@
-//
-// Created by willi on 2022-11-21.
-//
-
 #ifndef ASSIGNMENT_03_MEMORYSPACE_H
 #define ASSIGNMENT_03_MEMORYSPACE_H
 
