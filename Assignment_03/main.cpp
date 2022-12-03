@@ -5,9 +5,14 @@
 #include <string>
 #include <random>
 #include <fstream>
+#include <semaphore>
+#include "processQueue.h"
 
 // Declaring default namespace for code clarity
 using namespace std;
+
+//Global variables for Semaphores
+counting_semaphore cores{0};
 
 // TODO: Separate functions into respective .cpp files for conciseness and modularity?
 //  Scheduler + Process
@@ -18,8 +23,9 @@ using namespace std;
 // Declaring functions
 // TODO: Decide which functions can open a stream vs just have it passed to if by reference
 [[noreturn]] void virtual_clock(int&);
-void process(int&, fstream&, fstream&, int);
+void process(int&, fstream&, fstream&, int,int);
 void scheduler(int&, fstream&);
+int getRandom();
 
 // Main Driver function
 int main() {
@@ -29,66 +35,78 @@ int main() {
 
     int clk = 0;
     // Initializing clock, scheduler, and memory manager
-    thread thr_clock(virtual_clock, ref(clk));
     thread thr_sched(scheduler, ref(clk), ref(log));
+    thread thr_clock(virtual_clock, ref(clk));
     thr_clock.detach();
     thr_sched.join();
-    std::cout << "Hello, World!" << std::endl;
+
     return 0;
 }
 
 // Virtual clock function to have a common timing point for all threads
 void virtual_clock(int& clk){
-    // TODO: replace with a semaphore since its the main topic for this assignment
-    // wait for the clock to be kick-started in order to allow some setup time before execution
-    while(clk == 0);
-
-    // TODO: once semaphore is implemented, move this to main function so clk is only initialized once
-    clk = 1000;
-
     // Increment the clock's value in 10 millisecond intervals forever
     do{
-        this_thread::sleep_for(chrono::nanoseconds(10000));
-        clk ++;
+        this_thread::sleep_for(chrono::milliseconds(10));
+        clk += 10;
     } while(true);
-    // TODO: do we want this process to terminate at the end? If so we can do like previous assignment, and force clk
-    //  negative in the main function to escape loop here since its ref
 }
 
 //Scheduler function
 // First In First Out (FIFO) scheduler for process that are listed in "processes.txt"
 void scheduler(int& clk, fstream& logs){
-    string temp = "";
-    // TODO: Open input file streams for the "commands.txt" and "processes.txt" files
     fstream processes;
     fstream commands;
 
     processes.open("../processes.txt", ios_base::in);
     commands.open("../commands.txt", ios_base::in);
 
-    // TODO: Read "processes.txt" for the core count (C), number of processes (N), and the processes respective values
     int N = 0;
     processes >> N;
-    temp = to_string(N);
-    logs << temp << endl;
-    temp = "";
-    processes >> temp;
-    logs << temp;
-    commands >> temp;
-    logs << temp;
+    for (int i = 0; i < N; ++i) {
+       cores.release();
+    }
 
-    // TODO: Start process threads as they arrive based on reference clock
-    //  (store order as file line # in an array maybe? or a parallel array of arrival and burst times?)
-    //  Should also have a common file stream for "commands.txt" passed to each (created above)
+    int i,j,k;
+    processes >> i;
+    processQueue* queue = new processQueue(i);
+    k = 1;
+    while (processes >> i){
+        processes >> j;
+        queue->addProc(i,j,k);
+        k ++;
+    }
+    queue->setIndex(0);
+    queue->sort();
 
-    // TODO: Semaphore to only allow as many processes as cores to run
+    int* info = new int[3];
+    while(true) {
+        info = queue->getInfo();
+        while( (clk / 1000 ) < info[0]);
+        cores.acquire();
+        thread thr_proc(process, ref(clk), ref(commands), ref(logs), info[1], info[2]);
+        thr_proc.detach();
+        if (queue->nextProc() == -1)
+            break;
+    }
 
-    // TODO: Clean up any pointers used here
+    // Checking that all processes have completed by acquiring all available cores
+    for( int l = 0; l < N; l++)
+        cores.acquire();
+
+    // end of scheduler
+    cout << "Scheduler has finished at clock time " << clk << endl;
+    delete[] info;
 }
 
 // Process function
 // Only should be called by scheduler when it has decided to start the process
-void process(int& clk, fstream& commands, fstream& log, int burst){
+void process(int& clk, fstream& commands, fstream& log, int burst, int ID){
+    int sClk = clk;
+    cout << "Starting process " << ID << " at clock time " << clk << endl;
+    while (burst > (clk - sClk)/1000);
+    cout << "Ending process " << ID << " at clock time " << clk << endl;
+    cores.release();
     // TODO: Log start and finish of process
 
     // TODO: Run the following loop until time to end
@@ -98,3 +116,10 @@ void process(int& clk, fstream& commands, fstream& log, int burst){
     // TODO: Signal semaphore at exit so next process can start
 }
 
+// Function to return a random integer between 10 and 1000
+int getRandom(){
+    random_device device;
+    mt19937 generator(device());
+    uniform_int_distribution<int> dist(1,100);
+    return dist(generator) * 10;
+}

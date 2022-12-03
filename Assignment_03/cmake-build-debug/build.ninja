@@ -67,6 +67,12 @@ build CMakeFiles/Assignment_03.dir/MemoryPage.cpp.obj: CXX_COMPILER__Assignment_
   OBJECT_DIR = CMakeFiles\Assignment_03.dir
   OBJECT_FILE_DIR = CMakeFiles\Assignment_03.dir
 
+build CMakeFiles/Assignment_03.dir/processQueue.cpp.obj: CXX_COMPILER__Assignment_03_Debug C$:/Users/willi/CLionProjects/COEN-346/Assignment_03/processQueue.cpp || cmake_object_order_depends_target_Assignment_03
+  DEP_FILE = CMakeFiles\Assignment_03.dir\processQueue.cpp.obj.d
+  FLAGS = -g -std=gnu++20
+  OBJECT_DIR = CMakeFiles\Assignment_03.dir
+  OBJECT_FILE_DIR = CMakeFiles\Assignment_03.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Assignment_03
@@ -75,7 +81,7 @@ build CMakeFiles/Assignment_03.dir/MemoryPage.cpp.obj: CXX_COMPILER__Assignment_
 #############################################
 # Link the executable Assignment_03.exe
 
-build Assignment_03.exe: CXX_EXECUTABLE_LINKER__Assignment_03_Debug CMakeFiles/Assignment_03.dir/main.cpp.obj CMakeFiles/Assignment_03.dir/MemorySpace.cpp.obj CMakeFiles/Assignment_03.dir/MemoryPage.cpp.obj
+build Assignment_03.exe: CXX_EXECUTABLE_LINKER__Assignment_03_Debug CMakeFiles/Assignment_03.dir/main.cpp.obj CMakeFiles/Assignment_03.dir/MemorySpace.cpp.obj CMakeFiles/Assignment_03.dir/MemoryPage.cpp.obj CMakeFiles/Assignment_03.dir/processQueue.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Assignment_03.dir
