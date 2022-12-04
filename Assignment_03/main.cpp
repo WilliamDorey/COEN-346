@@ -16,12 +16,7 @@ using namespace std;
 //Global variables for Semaphores
 counting_semaphore cores{0};
 counting_semaphore vm_turn{0};
-
-// TODO: Separate functions into respective .cpp files for conciseness and modularity?
-//  Scheduler + Process
-//  Memory Manager
-//  Memory space should probably be a class since it gets at least 4 functions
-
+bool flag = false;
 
 // Declaring functions
 // TODO: Decide which functions can open a stream vs just have it passed to if by reference
@@ -29,7 +24,8 @@ counting_semaphore vm_turn{0};
 void process(int&, fstream&, fstream&, int, int, int);
 void scheduler(int&, fstream&);
 int getRandom();
-void VMmanager(int&, int&, fstream&, fstream&, int);
+void VM_manager(int&, int&, int&, fstream&, fstream&, int);
+void setFlag(int);
 
 // Main Driver function
 int main() {
@@ -109,13 +105,10 @@ void process(int& clk, fstream& commands, fstream& log, int start, int burst, in
     int sClk = clk;
     cout << "Starting process " << ID << " at clock time " << clk << endl;
 
-    // TODO: Log start and finish of process
-
-    // TODO: Run the following loop until time to end
-    //  Read command -> execute command -> log command upon complete -> get random int between 10 and 1000 ->
-    //  wait for that time in milliseconds (or wait until end of burst) -> repeat
-
-    // TODO: Signal semaphore at exit so next process can start
+    if(clk == 1000)
+        setFlag(1);     //let first process go in
+    while(!flag); //busy wait until flag=1
+    setFlag(0);         //lock VMM; only 1 process accesses it at a time
 
     int API_time = 0;
     string cmd;
@@ -123,29 +116,27 @@ void process(int& clk, fstream& commands, fstream& log, int start, int burst, in
     while (burst*10 > API_time){
         API_time += getRandom();
         sClk += API_time;
-        thread thr_vmm(VMmanager, ref(sClk), ref(ID), ref(commands), ref(log), start);
+        thread thr_vmm(VM_manager, ref(clk), ref(sClk), ref(ID), ref(commands), ref(log), start);
         thr_vmm.join();
     }
 
     while (burst > (clk - sClk)/1000);
     cout << "Ending process " << ID << " at clock time " << clk << endl;
+    setFlag(1); //release it
     cores.release();
 }
 
-void VMmanager(int& sClk, int& ID, fstream& commands, fstream& log,int arrival){
+void VM_manager(int& clk, int& sClk, int& ID, fstream& commands, fstream& log,int arrival){
     string cmd;
     commands >> cmd;
     int vID, val;
 
     MemorySpace* mem;
 
-    //need flag; if not my turn, stuck in while loop
-    //if arr => sClk, exit while loop
-    //while (arrival*1000 < sClk);
     if(cmd == "Store"){
         commands >> vID;
         commands >> val;
-       // mem->Store(to_string(vID),val);
+        // mem->Store(to_string(vID),val);
         log << "Clock: " << sClk << " Process: " << ID << ", Store: Variable " << vID << ", Value: " << val << endl;
     }
     else if (cmd == "Lookup"){
@@ -160,7 +151,12 @@ void VMmanager(int& sClk, int& ID, fstream& commands, fstream& log,int arrival){
     }
     else
         cout << "Invalid Command in input file\n";
+}
 
+void setFlag(int flagVal){
+//    vm_turn.acquire();
+    flag = flagVal;
+//    vm_turn.release();
 }
 
 // Function to return a random integer between 10 and 1000
