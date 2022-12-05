@@ -1,7 +1,3 @@
-//
-// Created by david on 2022-12-03.
-//
-
 #include "LinkedList.h"
 #include "Node.h"
 #include "MemorySpace.h"

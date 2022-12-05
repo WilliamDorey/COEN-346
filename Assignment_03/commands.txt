@@ -3,6 +3,7 @@ Store 2 3
 Store 3 7
 Lookup 3
 Lookup 2
+Lookup 4
 Release 1
 Store 1 8
 Lookup 1

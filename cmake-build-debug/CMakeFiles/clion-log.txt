@@ -1,1 +1,1 @@
-CMakeLists.txt not found in C:\Users\willi\CLionProjects\COEN-346 Select CMakeLists.txt
+CMakeLists.txt not found in C:\Users\william\CLionProjects\COEN-346 Select CMakeLists.txt

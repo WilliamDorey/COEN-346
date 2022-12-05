@@ -1,8 +1,3 @@
-//
-// Created by david on 2022-12-03.
-//
-
-
 #ifndef UNTITLED5_NODE_H
 #define UNTITLED5_NODE_H
 

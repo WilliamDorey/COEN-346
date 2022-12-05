@@ -1,8 +1,10 @@
 #include "MemorySpace.h"
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <fstream>
 #include <vector>
+#include <sstream>
 #include "MemorySpace.h"
 #include "Node.h"
 #include "LinkedList.h"
@@ -95,8 +97,26 @@ void MemorySpace::Release(string id)
             //Moves released value to disk (if we want to delete we comment line below)
             //Cycles to end of file
             disk.seekg(0, ios::end);
+
+            disk.clear();
+            disk.seekg(0);
+            string line;
+            while(getline(disk, line)){
+                istringstream ss(line);
+                string vid;
+                ss >> vid;
+                if (vid == id){
+                    break;
+                }
+            }
+            if (disk.eof()) {
+                disk.clear();
+                disk.seekg(0, ios::end);
+            }
             //Writes out to file
-            disk << endl << MainMem[i].getId() << " " << MainMem[i].getValue();
+            string temp = '\n' + MainMem[i].getId() + ' ' + to_string(MainMem[i].getValue());
+            disk.seekp(-ios::off_type(line.size()) - 1, ios_base::cur);
+            disk << temp;
             //Id removed from linked list
             List->removeNode(id);
             //Space is cleared in memory
@@ -130,9 +150,8 @@ int MemorySpace::Lookup(string id) {
         }
     }
     //If the value is in disk
-    if (lookedup == false)
+    while (!lookedup)
     {
-        cout <<"HERE!\n";
         //Stores lines when finding id and value in disk
         string line;
         //Stores lines when rewriting file
@@ -148,6 +167,7 @@ int MemorySpace::Lookup(string id) {
         disk.clear();
         disk.seekg(0);
 
+        bool flag = true;
         //Cycles line by line until line with id is found
         while(disk >> line)
         {
@@ -159,9 +179,12 @@ int MemorySpace::Lookup(string id) {
                 disk >> line;
                 //Stores lines value of disk
                 ValueTBAdded = line;
+                flag = false;
                 break;
             }
         }
+        if(flag)
+            break;
         //Flag if there is space in memory
         bool space_in_memory = false;
         //Slot of array with free space
@@ -177,6 +200,7 @@ int MemorySpace::Lookup(string id) {
             if (MainMem[k].getId() == "") {
                 free_space = k;
                 space_in_memory = true;
+                break;
             }
         }
         //If there is an empty space the disk id and value are put into the array
@@ -206,15 +230,7 @@ int MemorySpace::Lookup(string id) {
             for (int l = 0; l < linesvector.size(); l++)
             {
                 //Catches id and value that was added to memory
-                if(linesvector[l] == ValueTBAdded)
-                {
-
-                }
-                else if (linesvector[l] == id)
-                {
-
-                }
-                else
+                if ((linesvector[l] != ValueTBAdded) && (linesvector[l] != id))
                 {
                     //Writes rest of information
                     disk << linesvector[l]<< " ";
@@ -244,9 +260,7 @@ int MemorySpace::Lookup(string id) {
             disk.close();
 
             //Opens new file stream and clears file by default
-            while (disk >> line2)
-            {
-            }
+            while (disk >> line2);
 
             disk.open("../vm.txt", ios::out);
 
@@ -254,15 +268,7 @@ int MemorySpace::Lookup(string id) {
             for (int l = 0; l < linesvector.size(); l++)
             {
                 //Catches id and value that was added to memory
-                if(linesvector[l] == ValueTBAdded)
-                {
-
-                }
-                else if (linesvector[l] == id)
-                {
-
-                }
-                else
+                if ((linesvector[l] != ValueTBAdded) && (linesvector[l] != id))
                 {
                     //Writes rest of information
                     disk << linesvector[l]<< " ";
@@ -286,12 +292,7 @@ int MemorySpace::Lookup(string id) {
                 //Cycles through all slots of array to find id and value that have to be removed
                 if (MainMem[i].getId() == IDTBRemoved)
                 {
-                    //while (disk >> line2)
-                    //{
-                        disk << MainMem[i].getId() << " " << MainMem[i].getValue();
-                    //}
-                    //Adds removed to disk
-
+                    disk << MainMem[i].getId() << " " << MainMem[i].getValue();
                     //Sets id and value in memory from didk
                     MainMem[i].setId(id);
                     MainMem[i].setValue(newvalue);
@@ -310,7 +311,5 @@ int MemorySpace::Lookup(string id) {
         }
         return newvalue;
     }
-    this->printing();
-    this->printingLL();
     return -1;
 }

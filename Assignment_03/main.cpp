@@ -39,6 +39,7 @@ int main() {
 
     string cmd;
     int clk = 0;
+
     // Initializing clock, scheduler, and memory manager
     thread thr_sched(scheduler, ref(clk), ref(log), ref(cmd));
     thread thr_MMU(MMU, ref(clk), ref(log), mem, ref(cmd));
@@ -46,6 +47,8 @@ int main() {
 
     thr_MMU.detach();
     thr_clock.detach();
+
+    //The program will terminate once the scheduler completes it's execution
     thr_sched.join();
 
     return 0;
@@ -63,18 +66,20 @@ int main() {
 //Scheduler function
 // First In First Out (FIFO) scheduler for process that are listed in "processes.txt"
 void scheduler(int& clk, fstream& logs, string& cmd){
+    // fstream creation for processes file and commands file
     fstream processes;
     fstream commands;
-
     processes.open("../processes.txt", ios_base::in);
     commands.open("../commands.txt", ios_base::in);
 
+    // finding the number of cores and setting up the semaphore to respect this value
     int N = 0;
     processes >> N;
     for (int i = 0; i < N; ++i) {
        cores.release();
     }
 
+    //Populating the process Queue
     int i,j,k;
     processes >> i;
     auto* queue = new processQueue(i);
@@ -87,6 +92,7 @@ void scheduler(int& clk, fstream& logs, string& cmd){
     queue->setIndex(0);
     queue->sort();
 
+    // Calls the processes as they arrive and semaphore is available
     int* info;
     while(true) {
         info = queue->getInfo();
@@ -110,21 +116,27 @@ void scheduler(int& clk, fstream& logs, string& cmd){
 // Process function
 // Only should be called by scheduler when it has decided to start the process
 void process(int& clk, fstream& commands, fstream& log, int burst, int ID, string& cmd){
+    // log start
     string temp_log = "Clock: " + to_string(clk) + ", Process: " + to_string(ID) + ": Started.\n";
     log << temp_log;
     cout << temp_log;
 
+    //storing the start time of the process and calculating the first API request time
     int sClk = clk; // start clock time
     int nextExec = clk + getRandom();
 
     do{
+        // wait until the execution time for the API
         while(nextExec > clk);
+        //Wait for the MMU to become available
         MMU_status.acquire();
-        if(!getline(commands, cmd)){
+        //Determine the command to be run
+        if(!getline(commands, cmd)) {
             commands.clear();
             commands.seekg(0);
             getline(commands, cmd);
         }
+        //Send API command via reference string location and semaphores
         temp_log = ", Process: " + to_string(ID) + ": " + cmd;
         API_ready.release();
         API_complete.acquire();
@@ -132,12 +144,15 @@ void process(int& clk, fstream& commands, fstream& log, int burst, int ID, strin
         log << temp_log;
         cout << temp_log;
         cmd = "";
+        //Finished with MMU and calculate next execution time
         MMU_status.release();
         nextExec = clk + getRandom();
     } while (burst > (nextExec - sClk) / 1000);
 
+    //busy wait until the process expires
     while (burst > ( clk - sClk ) / 1000);
 
+    //log end
     temp_log = "Clock: " + to_string(clk) + ", Process: " + to_string(ID) + ": Finished.\n";
     log << temp_log;
     cout << temp_log;
@@ -168,7 +183,7 @@ void process(int& clk, fstream& commands, fstream& log, int burst, int ID, strin
         } else if (func == "Release"){
             ss >> vid;
             mem -> Release(vid);
-            cmd = "Variable released";
+            cmd = "Release Completed";
         } else if (func == "Lookup") {
             ss >> vid;
             val = mem -> Lookup(vid);
