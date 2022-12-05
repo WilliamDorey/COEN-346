@@ -3,4 +3,4 @@ project(Assignment_03)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(Assignment_03 main.cpp MemorySpace.cpp MemorySpace.h MemoryPage.cpp MemoryPage.h processQueue.cpp processQueue.h)
+add_executable(Assignment_03 main.cpp MemorySpace.cpp MemorySpace.h MemoryPage.cpp MemoryPage.h processQueue.cpp processQueue.h LinkedList.cpp Node.cpp)

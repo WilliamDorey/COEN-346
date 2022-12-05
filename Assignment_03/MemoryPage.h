@@ -10,20 +10,25 @@ using namespace std;
 
 class MemoryPage {
 private:
+    //Data types
     string id;
     unsigned int value{};
 
 public:
+    //Constructor    
     MemoryPage();
     MemoryPage(string, unsigned int);
-
+    
+    //Destructor
     ~MemoryPage();
 
     string getContent();
 
+    //Get fucntions
     string getId();
     unsigned int getValue();
 
+    //Set functions
     void setId(string);
     void setValue(unsigned int);
 };
